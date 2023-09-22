@@ -178,3 +178,4 @@ As you can see, the message was sent and then received by the same app.
 ## Summary
 
 So, the env is ready and you can start playing with both services.
+
