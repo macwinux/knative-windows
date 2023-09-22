@@ -28,7 +28,7 @@ Copy the knative-op folder in your C disk root.
 Go to your environment variables and in the path add this route:![Alt text](images/image5.png)
 In my case the name of the folder is knative.
 
-### Install knative with minikube
+## Install knative with minikube
 Install it with minikube is super easy, it's just like in the knative documentation.
 Open a new terminal and run:
 
@@ -41,7 +41,31 @@ At some point in the installation you need to run in another terminal window the
 
 Once it's finished you can start working with knative serving service or with knative eventing service.
 
-### Knative Serving
+## Install knative in rancher-desktop
+
+1.  Install crds, knative-serving and kourier:
+
+```$KNATIVE_VERSION="1.11.1"```
+``` kubectl apply -f https://github.com/knative/serving/releases/download/knative-v${KNATIVE_VERSION}/serving-crds.yaml```
+```kubectl apply -f https://github.com/knative/serving/releases/download/knative-v${KNATIVE_VERSION}/serving-core.yaml```
+```$KNATIVE_NET_KOURIER_VERSION="1.11.2"```
+``` kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v${KNATIVE_NET_KOURIER_VERSION}/kourier.yaml```
+
+2.  Get the external ip:
+```kubectl -n kourier-system get service kourier -o jsonpath='{.status.loadBalancer.ingress[0].ip}```
+3.  Patch the config-domain and replace the external ip in this command:
+```kubectl patch configmap -n knative-serving config-domain -p '{\"data\": {\"{EXTERNAL_OP}.sslip.io\": \"\"}}'```    
+4.  Patch the config-network:
+```kubectl patch configmap/config-network --namespace knative-serving --type merge --patch '{\"data\":{\"ingress.class\":\"kourier.ingress.networking.knative.dev\"}}'```
+
+With this you can use knative-serving.
+
+Steps for install knative-eventing:
+
+1.  
+
+
+## Knative Serving
 
 First, we need to check that we're using the right context:
 
@@ -95,3 +119,39 @@ if you run curl several times, you should receive different responses:
 ![Alt text](images/image9.png)
 
 ![Alt text](images/image10.png)
+
+## Knative eventing
+
+First, check that your broker is up and running:
+
+```kn broker list```
+
+Ok, once you see that we have a broker up, we can deploy the cloudevents player that is going to send events to this broker:
+
+```kn service create cloudevents-player --image quay.io/ruben/cloudevents-player:latest```
+
+The service is now running but it doesn't know where the broker is so let's create a SinkBinding between the service and the broker.
+
+```kn source binding create ce-player-binding --subject "Service:serving.knative.dev/v1:cloudevents-player" --sink broker:example-broker```
+
+Now, open the cloudevents url:
+![Alt text](images/image11.png)
+
+Fill the fields and send the event:
+![Alt text](images/image12.png)
+
+With that, your message was sent to your broker.
+The next step is to create a trigger and react to these messages that are in your broker.
+
+For this demo, our sink is going to be our cloudevents app as well:
+
+```kn trigger create cloudevents-trigger --sink cloudevents-player  --broker example-broker```
+
+Ok, all is configured. The last thing is to send a new message and see how it's recived by cloudevents app:
+![Alt text](images/image13.png)
+
+As you can see, the message was sent and then received by the same app.
+
+## Summary
+
+So, the env is ready and you can start playing with both services.
