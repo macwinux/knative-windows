@@ -7,7 +7,7 @@
 
 
 ### Configurations
-First, in windows you probably have the port 80 busy by the service http or by traefik if you're using Rancher desktop.
+First, in windows you probably have the port 80 busy by the service http or by traefik if you're using Rancher desktop (I couldn't expose the loadbalancer with it, so, I prefer to use kourier).
 
 Open the terminal with admin perms and run (probably you'll need to run it every time you switch on your laptop):
 ```net stop http```
@@ -62,8 +62,18 @@ With this you can use knative-serving.
 
 Steps for install knative-eventing:
 
-1.  
+1.  Install crd, knative-eventing, in-memory channel and in-memory broker:
+```$KNATIVE_EVENTING_VERSION="1.11.3"```
+```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/eventing-crds.yaml```
+```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/eventing-core.yaml```
+```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/in-memory-channel.yaml```
+```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/mt-channel-broker.yaml```
+2.  Create the broker:
+```kn broker create example-broker```
+3. List the broker:
+```kn broker list```
 
+And that's all. You have both services availables in rancher-desktop.
 
 ## Knative Serving
 
