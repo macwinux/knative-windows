@@ -110,6 +110,7 @@ Now, run the curl again and wait:
 
 #### Traffic splitting
 
+
 Now, update the service with a new version that use a new TARGET variable:
 
 ```kn service update hello --env TARGET=Knative```
