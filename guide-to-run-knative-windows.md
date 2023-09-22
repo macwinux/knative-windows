@@ -46,9 +46,13 @@ Once it's finished you can start working with knative serving service or with kn
 1.  Install crds, knative-serving and kourier:
 
 ```$KNATIVE_VERSION="1.11.1"```
+
 ``` kubectl apply -f https://github.com/knative/serving/releases/download/knative-v${KNATIVE_VERSION}/serving-crds.yaml```
+
 ```kubectl apply -f https://github.com/knative/serving/releases/download/knative-v${KNATIVE_VERSION}/serving-core.yaml```
+
 ```$KNATIVE_NET_KOURIER_VERSION="1.11.2"```
+
 ``` kubectl apply -f https://github.com/knative/net-kourier/releases/download/knative-v${KNATIVE_NET_KOURIER_VERSION}/kourier.yaml```
 
 2.  Get the external ip:
@@ -63,14 +67,22 @@ With this you can use knative-serving.
 Steps for install knative-eventing:
 
 1.  Install crd, knative-eventing, in-memory channel and in-memory broker:
+
 ```$KNATIVE_EVENTING_VERSION="1.11.3"```
+
 ```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/eventing-crds.yaml```
+
 ```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/eventing-core.yaml```
+
 ```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/in-memory-channel.yaml```
+
 ```kubectl apply --filename https://github.com/knative/eventing/releases/download/knative-v${KNATIVE_EVENTING_VERSION}/mt-channel-broker.yaml```
+
 2.  Create the broker:
 ```kn broker create example-broker```
+
 3. List the broker:
+
 ```kn broker list```
 
 And that's all. You have both services availables in rancher-desktop.
